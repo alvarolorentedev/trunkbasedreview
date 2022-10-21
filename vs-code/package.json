@@ -1,0 +1,169 @@
+{
+	"name": "trunk-based-review",
+	"displayName": "Trunk Based Review VS Code Extension",
+	"description": "Trunk Based Review VS Code Extension",
+	"version": "0.0.1",
+	"publisher": "kanekotic",
+	"private": true,
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/kanekotic/trunkbasedreview"
+	},
+	"engines": {
+		"vscode": "^1.65.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"*"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "trunkbasedreview.createNote",
+				"title": "Create Note",
+				"enablement": "!commentIsEmpty"
+			},
+			{
+				"command": "trunkbasedreview.replyNote",
+				"title": "Reply",
+				"enablement": "!commentIsEmpty"
+			},
+			{
+				"command": "trunkbasedreview.editNote",
+				"title": "Edit",
+				"icon": {
+					"dark": "resources/edit_inverse.svg",
+					"light": "resources/edit.svg"
+				}
+			},
+			{
+				"command": "trunkbasedreview.deleteNote",
+				"title": "Delete",
+				"icon": {
+					"dark": "resources/close_inverse.svg",
+					"light": "resources/close.svg"
+				}
+			},
+			{
+				"command": "trunkbasedreview.deleteNoteComment",
+				"title": "Delete",
+				"icon": {
+					"dark": "resources/close_inverse.svg",
+					"light": "resources/close.svg"
+				}
+			},
+			{
+				"command": "trunkbasedreview.saveNote",
+				"title": "Save"
+			},
+			{
+				"command": "trunkbasedreview.cancelsaveNote",
+				"title": "Cancel"
+			},
+			{
+				"command": "trunkbasedreview.startDraft",
+				"title": "Start Draft",
+				"enablement": "!commentIsEmpty"
+			},
+			{
+				"command": "trunkbasedreview.finishDraft",
+				"title": "Finish Draft"
+			},
+			{
+				"command": "trunkbasedreview.dispose",
+				"title": "Remove All Notes"
+			}
+		],
+		"menus": {
+			"commandPalette": [
+				{
+					"command": "trunkbasedreview.createNote",
+					"when": "false"
+				},
+				{
+					"command": "trunkbasedreview.replyNote",
+					"when": "false"
+				},
+				{
+					"command": "trunkbasedreview.deleteNote",
+					"when": "false"
+				},
+				{
+					"command": "trunkbasedreview.deleteNoteComment",
+					"when": "false"
+				}
+			],
+			"comments/commentThread/title": [
+				{
+					"command": "trunkbasedreview.deleteNote",
+					"group": "navigation",
+					"when": "commentController == comment-sample && !commentThreadIsEmpty"
+				}
+			],
+			"comments/commentThread/context": [
+				{
+					"command": "trunkbasedreview.createNote",
+					"group": "inline",
+					"when": "commentController == comment-sample && commentThreadIsEmpty"
+				},
+				{
+					"command": "trunkbasedreview.replyNote",
+					"group": "inline",
+					"when": "commentController == comment-sample && !commentThreadIsEmpty"
+				},
+				{
+					"command": "trunkbasedreview.startDraft",
+					"group": "inline",
+					"when": "commentController == comment-sample && commentThreadIsEmpty"
+				},
+				{
+					"command": "trunkbasedreview.finishDraft",
+					"group": "inline",
+					"when": "commentController == comment-sample && commentThread == draft"
+				}
+			],
+			"comments/comment/title": [
+				{
+					"command": "trunkbasedreview.editNote",
+					"group": "group@1",
+					"when": "commentController == comment-sample"
+				},
+				{
+					"command": "trunkbasedreview.deleteNoteComment",
+					"group": "group@2",
+					"when": "commentController == comment-sample && comment == canDelete"
+				}
+			],
+			"comments/comment/context": [
+				{
+					"command": "trunkbasedreview.cancelsaveNote",
+					"group": "inline@1",
+					"when": "commentController == comment-sample"
+				},
+				{
+					"command": "trunkbasedreview.saveNote",
+					"group": "inline@2",
+					"when": "commentController == comment-sample"
+				}
+			]
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"lint": "eslint . --ext .ts,.tsx"
+	},
+	"devDependencies": {
+		"@types/node": "^16.11.7",
+		"@types/vscode": "~1.65.0",
+		"@typescript-eslint/eslint-plugin": "^5.30.0",
+		"@typescript-eslint/parser": "^5.30.0",
+		"eslint": "^8.13.0",
+		"typescript": "^4.8.4"
+	}
+}
