@@ -24,9 +24,21 @@ export function activate(context: vscode.ExtensionContext) {
 	// A `CommentController` is able to provide comments for documents.
 	const commentController = vscode.comments.createCommentController('comment-sample', 'Comment API Sample');
 	context.subscriptions.push(commentController);
-	// commentController.createCommentThread(vscode.Uri.file('C:\\Users\\alvaro.perez\\OneDrive - ClimatePartner GmbH\\Desktop\\test.txt'), new vscode.Range(0,0,0,0), [
-	// 	new NoteComment("awesome", vscode.CommentMode.Preview, { name: 'vscode' }, undefined, undefined)
-	// ])
+	console.log("hello")
+	vscode.workspace.openTextDocument(vscode.Uri.file('C:\\Users\\alvaro.perez\\OneDrive - ClimatePartner GmbH\\Desktop\\review.json')
+	).then((document) => {
+		let {threads} = JSON.parse(document.getText());
+		threads.forEach((element:any) => {
+			commentController.createCommentThread(
+				vscode.Uri.file(element.file), 
+				new vscode.Range(element.range.startLine,element.range.startCharacter,element.range.endLine,element.range.endCharacter), 
+				element.comments.map((comment: any) => new NoteComment(comment.text, vscode.CommentMode.Preview, { name: comment.owner })))
+		});
+		console.log(threads)
+	});
+	commentController.createCommentThread(vscode.Uri.file('C:\\Users\\alvaro.perez\\OneDrive - ClimatePartner GmbH\\Desktop\\test.txt'), new vscode.Range(0,0,0,0), [
+	 	new NoteComment("awesome", vscode.CommentMode.Preview, { name: 'vscode' }, undefined, undefined)
+	 ])
 	
 	// A `CommentingRangeProvider` controls where gutter decorations that allow adding comments are shown
 	commentController.commentingRangeProvider = {
