@@ -18,17 +18,17 @@ function activate(context) {
     // A `CommentController` is able to provide comments for documents.
     const commentController = vscode.comments.createCommentController('comment-sample', 'Comment API Sample');
     context.subscriptions.push(commentController);
-    console.log("hello");
-    vscode.workspace.openTextDocument(vscode.Uri.file('C:\\Users\\alvaro.perez\\OneDrive - ClimatePartner GmbH\\Desktop\\review.json')).then((document) => {
-        let { threads } = JSON.parse(document.getText());
-        threads.forEach((element) => {
-            commentController.createCommentThread(vscode.Uri.file(element.file), new vscode.Range(element.range.startLine, element.range.startCharacter, element.range.endLine, element.range.endCharacter), element.comments.map((comment) => new NoteComment(comment.text, vscode.CommentMode.Preview, { name: comment.owner })));
-        });
-        console.log(threads);
-    });
-    commentController.createCommentThread(vscode.Uri.file('C:\\Users\\alvaro.perez\\OneDrive - ClimatePartner GmbH\\Desktop\\test.txt'), new vscode.Range(0, 0, 0, 0), [
-        new NoteComment("awesome", vscode.CommentMode.Preview, { name: 'vscode' }, undefined, undefined)
-    ]);
+    vscode.workspace.workspaceFolders.forEach(
+        (folder) => {
+            const reviewFile = vscode.Uri.joinPath(folder.uri, './review.json')
+            vscode.workspace.openTextDocument(vscode.Uri.file(reviewFile.path)).then((document) => {
+                let { threads } = JSON.parse(document.getText());
+                threads.forEach((element) => {
+                    commentController.createCommentThread(vscode.Uri.file(element.file), new vscode.Range(element.range.startLine, element.range.startCharacter, element.range.endLine, element.range.endCharacter), element.comments.map((comment) => new NoteComment(comment.text, vscode.CommentMode.Preview, { name: comment.owner })));
+                });
+            });
+        }
+    )
     // A `CommentingRangeProvider` controls where gutter decorations that allow adding comments are shown
     commentController.commentingRangeProvider = {
         provideCommentingRanges: (document, token) => {
