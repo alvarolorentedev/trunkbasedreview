@@ -21,7 +21,6 @@ class NoteComment implements vscode.Comment {
 }
 
 export function activate(context: vscode.ExtensionContext) {
-	// A `CommentController` is able to provide comments for documents.
 	const commentController = vscode.comments.createCommentController('trunk-based-review', 'Trunk based development review comments');
 	context.subscriptions.push(commentController);
 	vscode.workspace.workspaceFolders?.forEach(
@@ -41,7 +40,6 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	)
 
-	// A `CommentingRangeProvider` controls where gutter decorations that allow adding comments are shown
 	commentController.commentingRangeProvider = {
 		provideCommentingRanges: (document: vscode.TextDocument, token: vscode.CancellationToken) => {
 			const lineCount = document.lineCount;
