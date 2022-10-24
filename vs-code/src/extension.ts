@@ -24,7 +24,6 @@ export function activate(context: vscode.ExtensionContext) {
 	// A `CommentController` is able to provide comments for documents.
 	const commentController = vscode.comments.createCommentController('comment-sample', 'Comment API Sample');
 	context.subscriptions.push(commentController);
-	console.log("hello")
 	vscode.workspace.openTextDocument(vscode.Uri.file('C:\\Users\\alvaro.perez\\OneDrive - ClimatePartner GmbH\\Desktop\\review.json')
 	).then((document) => {
 		let {threads} = JSON.parse(document.getText());
