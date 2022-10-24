@@ -16,7 +16,7 @@ class NoteComment {
 }
 function activate(context) {
     // A `CommentController` is able to provide comments for documents.
-    const commentController = vscode.comments.createCommentController('comment-sample', 'Comment API Sample');
+    const commentController = vscode.comments.createCommentController('trunk-based-review', 'Trunk based development review comments');
     context.subscriptions.push(commentController);
     vscode.workspace.workspaceFolders?.forEach(folder => {
         const reviewFile = vscode.Uri.joinPath(folder.uri, '.review', 'unresolved.json');

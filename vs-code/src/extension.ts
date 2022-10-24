@@ -22,7 +22,7 @@ class NoteComment implements vscode.Comment {
 
 export function activate(context: vscode.ExtensionContext) {
 	// A `CommentController` is able to provide comments for documents.
-	const commentController = vscode.comments.createCommentController('comment-sample', 'Comment API Sample');
+	const commentController = vscode.comments.createCommentController('trunk-based-review', 'Trunk based development review comments');
 	context.subscriptions.push(commentController);
 	vscode.workspace.workspaceFolders?.forEach(
 		folder => {
