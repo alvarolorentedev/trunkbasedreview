@@ -1,5 +1,7 @@
 'use strict';
 
+import { join } from 'path';
+import { TextEncoder } from 'util';
 import * as vscode from 'vscode';
 
 let commentId = 1;
@@ -21,23 +23,23 @@ class NoteComment implements vscode.Comment {
 }
 
 export function activate(context: vscode.ExtensionContext) {
+	let reviewConfigs: any = {}
 	const commentController = vscode.comments.createCommentController('trunk-based-review', 'Trunk based development review comments');
 	context.subscriptions.push(commentController);
 	vscode.workspace.workspaceFolders?.forEach(
 		folder => {
-			const reviewFile = vscode.Uri.joinPath(folder.uri, '.review',  'unresolved.json')
-			vscode.workspace.openTextDocument(vscode.Uri.file(reviewFile.path)
+			const reviewFile = vscode.Uri.joinPath(folder.uri, '.review', 'unresolved.json')	
+			Promise.resolve(vscode.workspace.openTextDocument(vscode.Uri.file(reviewFile.path))
 			).then((document) => {
-				let {threads} = JSON.parse(document.getText());
-				threads.forEach((element:any) => {
-					commentController.createCommentThread(
-						vscode.Uri.file(element.file), 
-						new vscode.Range(element.range.startLine,element.range.startCharacter,element.range.endLine,element.range.endCharacter), 
-						element.comments.map((comment: any) => new NoteComment(comment.text, vscode.CommentMode.Preview, { name: comment.owner })))
-				});
-				console.log(threads)
-			});
-		}
+					reviewConfigs[folder.uri.path] = JSON.parse(document.getText());
+					reviewConfigs[folder.uri.path].threads.forEach((element:any) => {
+						commentController.createCommentThread(
+							vscode.Uri.joinPath(folder.uri, element.file), 
+							new vscode.Range(element.range.startLine,element.range.startCharacter,element.range.endLine,element.range.endCharacter), 
+							element.comments.map((comment: any) => new NoteComment(comment.text, vscode.CommentMode.Preview, { name: comment.owner })))
+					});
+			}).catch(() => console.log(`${folder.name} workspace does not use trunk based review`));
+	}
 	)
 
 	commentController.commentingRangeProvider = {
@@ -78,6 +80,7 @@ export function activate(context: vscode.ExtensionContext) {
 				comment.label = undefined;
 				return comment;
 			});
+			saveWorkspaceNotes(thread)
 		}
 	}));
 
@@ -88,14 +91,14 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 
 		thread.comments = thread.comments.filter(cmt => (cmt as NoteComment).id !== comment.id);
-
+		saveWorkspaceNotes(thread)
 		if (thread.comments.length === 0) {
-			thread.dispose();
+			removeThreadFromWorkspaceNotes(thread)
 		}
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('trunkbasedreview.deleteNote', (thread: vscode.CommentThread) => {
-		thread.dispose();
+		removeThreadFromWorkspaceNotes(thread)
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('trunkbasedreview.cancelsaveNote', (comment: NoteComment) => {
@@ -154,6 +157,56 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 
 		thread.comments = [...thread.comments, newComment];
-		console.log(thread)
+		saveWorkspaceNotes(thread)
+	}
+
+	function removeThreadFromWorkspaceNotes (thread: vscode.CommentThread){
+		const workspaceUri = vscode.workspace.getWorkspaceFolder(thread.uri)?.uri
+		const workspacePath = workspaceUri?.path || ""
+		const fileSubPath = thread.uri.path.replace(workspacePath, "")
+		reviewConfigs[workspacePath].threads = reviewConfigs[workspacePath].threads.map((threadJson: any) => {
+			if (threadJson.file != fileSubPath || !thread.range.isEqual(new vscode.Range(threadJson.range.startLine, threadJson.range.startCharacter, threadJson.range.endLine, threadJson.range.endCharacter)))
+				return threadJson
+		}).filter((thread: any) => thread)
+		const reviewFile = vscode.Uri.joinPath(workspaceUri!, '.review', 'unresolved.json')
+		vscode.workspace.fs.writeFile(reviewFile, new TextEncoder().encode(JSON.stringify(reviewConfigs[workspacePath], undefined, 4)));
+		thread.dispose()
+	}
+	function saveWorkspaceNotes(thread: vscode.CommentThread){
+		const workspaceUri = vscode.workspace.getWorkspaceFolder(thread.uri)?.uri
+		const workspacePath = workspaceUri?.path || ""
+		const fileSubPath = thread.uri.path.replace(workspacePath, "")
+		let addedToExistingThread=false;
+		if (!reviewConfigs[workspacePath]) {
+			reviewConfigs[workspacePath]={
+				threads: []
+			}
+		}
+		reviewConfigs[workspacePath].threads = reviewConfigs[workspacePath].threads.map((threadJson: any) => {
+			if (threadJson.file != fileSubPath || !thread.range.isEqual(new vscode.Range(threadJson.range.startLine, threadJson.range.startCharacter, threadJson.range.endLine, threadJson.range.endCharacter)))
+				return threadJson
+			addedToExistingThread = true
+			threadJson.comments = thread.comments.map((comment: vscode.Comment) => ({
+				owner: comment.author.name,
+				text: comment.body
+			}))
+			return threadJson
+		})
+		if(!addedToExistingThread)
+		reviewConfigs[workspacePath].threads = [...reviewConfigs[workspacePath].threads, {
+			file: fileSubPath,
+			range: {
+				startLine: thread.range.start.line,
+				startCharacter: thread.range.start.character,
+				endLine: thread.range.end.line,
+				endCharacter: thread.range.end.character,
+			},
+			comments: thread.comments.map((comment: vscode.Comment) => ({
+				owner: comment.author.name,
+				text: comment.body
+			}))
+		}]
+		const reviewFile = vscode.Uri.joinPath(workspaceUri!, '.review', 'unresolved.json')
+		vscode.workspace.fs.writeFile(reviewFile, new TextEncoder().encode(JSON.stringify(reviewConfigs[workspacePath], undefined, 4)));
 	}
 }

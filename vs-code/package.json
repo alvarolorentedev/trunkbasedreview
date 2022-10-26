@@ -101,53 +101,53 @@
 				{
 					"command": "trunkbasedreview.deleteNote",
 					"group": "navigation",
-					"when": "commentController == comment-sample && !commentThreadIsEmpty"
+					"when": "commentController == trunk-based-review && !commentThreadIsEmpty"
 				}
 			],
 			"comments/commentThread/context": [
 				{
 					"command": "trunkbasedreview.createNote",
 					"group": "inline",
-					"when": "commentController == comment-sample && commentThreadIsEmpty"
+					"when": "commentController == trunk-based-review && commentThreadIsEmpty"
 				},
 				{
 					"command": "trunkbasedreview.replyNote",
 					"group": "inline",
-					"when": "commentController == comment-sample && !commentThreadIsEmpty"
+					"when": "commentController == trunk-based-review && !commentThreadIsEmpty"
 				},
 				{
 					"command": "trunkbasedreview.startDraft",
 					"group": "inline",
-					"when": "commentController == comment-sample && commentThreadIsEmpty"
+					"when": "commentController == trunk-based-review && commentThreadIsEmpty"
 				},
 				{
 					"command": "trunkbasedreview.finishDraft",
 					"group": "inline",
-					"when": "commentController == comment-sample && commentThread == draft"
+					"when": "commentController == trunk-based-review && commentThread == draft"
 				}
 			],
 			"comments/comment/title": [
 				{
 					"command": "trunkbasedreview.editNote",
 					"group": "group@1",
-					"when": "commentController == comment-sample"
+					"when": "commentController == trunk-based-review"
 				},
 				{
 					"command": "trunkbasedreview.deleteNoteComment",
 					"group": "group@2",
-					"when": "commentController == comment-sample && comment == canDelete"
+					"when": "commentController == trunk-based-review && comment == canDelete"
 				}
 			],
 			"comments/comment/context": [
 				{
 					"command": "trunkbasedreview.cancelsaveNote",
 					"group": "inline@1",
-					"when": "commentController == comment-sample"
+					"when": "commentController == trunk-based-review"
 				},
 				{
 					"command": "trunkbasedreview.saveNote",
 					"group": "inline@2",
-					"when": "commentController == comment-sample"
+					"when": "commentController == trunk-based-review"
 				}
 			]
 		}
