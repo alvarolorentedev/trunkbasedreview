@@ -73,15 +73,6 @@
 				"title": "Cancel"
 			},
 			{
-				"command": "trunkbasedreview.startDraft",
-				"title": "Start Draft",
-				"enablement": "!commentIsEmpty"
-			},
-			{
-				"command": "trunkbasedreview.finishDraft",
-				"title": "Finish Draft"
-			},
-			{
 				"command": "trunkbasedreview.dispose",
 				"title": "Remove All Notes"
 			}
@@ -122,16 +113,6 @@
 					"command": "trunkbasedreview.replyNote",
 					"group": "inline",
 					"when": "commentController == trunk-based-review && !commentThreadIsEmpty"
-				},
-				{
-					"command": "trunkbasedreview.startDraft",
-					"group": "inline",
-					"when": "commentController == trunk-based-review && commentThreadIsEmpty"
-				},
-				{
-					"command": "trunkbasedreview.finishDraft",
-					"group": "inline",
-					"when": "commentController == trunk-based-review && commentThread == draft"
 				}
 			],
 			"comments/comment/title": [

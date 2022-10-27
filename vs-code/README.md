@@ -13,11 +13,11 @@ Trunk-Based review tries to bridge this for teams that don't want or are unable 
 
 ## How it works
 
-- Do trunk-based Development
+- Do trunk-based Development.
 - Open comments and change request in the `main branch`.
 - Answer comments and do changes in the `main branch`.
-- Resolve conversations 
-- keep a historical of it.
+- Resolve conversations. 
+- Move conversation to historical log of it.
 
 # Benefits
 
