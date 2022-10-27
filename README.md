@@ -9,8 +9,8 @@ Enabling to focus in continious delivery through [trunk-based development](https
 # Benefits
 
 - Provides capability to teams to achieve continuous Deployment due to the immediate integration of code.
-- Faster feedback loop.
-- Smaller changes that help reduce MTTR.
+- Faster feedback loop, through continious review of the codebase.
+- Smaller changes are packed that help reduce MTTR.
 
 # How it works
 
