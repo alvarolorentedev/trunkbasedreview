@@ -1,7 +1,3 @@
-# Trunk-Based Review
-
-async peer reviewing for trunk-based development
-
 ## Motivation
 
 Pull Requests seem to be a norm for many professionals in the software development business. Nevertheless, git flow is deemed legacy. This means there is a disconnection in between the preferred/know used peer review system and modern practices.
