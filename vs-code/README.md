@@ -8,8 +8,7 @@ Pull Requests seem to be a norm for many professionals in the software developme
 
 While doing [trunk-based development](https://www.atlassian.com/continuous-delivery/continuous-integration/trunk-based-development) and follow best practices like branching by abstraction and feature toggles.
 
-
-Trunk-Based review tries to bridge this for teams that don't want or are unable to adapt to other modern agile peer review models like pair programming.
+Trunk-Based review tries to bridge this for teams that don't want or are unable to adapt to other modern agile peer review models like pair programming, due to for example a lack of collocation or overlap in working hours.
 
 # Benefits
 
