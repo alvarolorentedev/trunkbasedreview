@@ -1,8 +1,8 @@
 {
 	"name": "trunk-based-review",
-	"displayName": "Trunk Based Review VS Code Extension",
+	"displayName": "Trunk Based Review",
 	"description": "Trunk Based Review VS Code Extension",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"publisher": "kanekotic",
 	"private": true,
 	"license": "MIT",
@@ -14,8 +14,16 @@
 		"vscode": "^1.65.0"
 	},
 	"categories": [
-		"Other"
+		"Other",
+		"Visualization"
 	],
+	"keywords": [
+		"Trunk Based Development",
+		"Peer Review",
+		"PR",
+		"TBD"
+	],
+	"icon": "images/icon.png",
 	"activationEvents": [
 		"*"
 	],
