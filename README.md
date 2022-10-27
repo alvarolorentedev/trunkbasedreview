@@ -1,10 +1,10 @@
 # Motivation
 
-Pull Requests seem to be a norm for many professionals in the software development business. Nevertheless, git flow is deemed legacy. This means there is a disconnection in between the preferred/know used peer review system and modern practices.
+Pull Requests seem to be a norm for many professionals in the software development business. Nevertheless, branching strategies like gitflow is deemed [legacy](https://www.atlassian.com/continuous-delivery/continuous-integration/trunk-based-development). This means there is a disconnection in between the preferred/know used peer review system and modern practices.
 
-While doing [trunk-based development](https://www.atlassian.com/continuous-delivery/continuous-integration/trunk-based-development) and follow best practices like branching by abstraction and feature toggles.
+**Trunk-Based review** tries to bridge this for teams that lack the capability to adapt to other modern agile peer review models like pair programming. Due to for example a lack of collocation or overlap in working hours.
 
-Trunk-Based review tries to bridge this for teams that don't want or are unable to adapt to other modern agile peer review models like pair programming, due to for example a lack of collocation or overlap in working hours.
+Enabling to focus in continious delivery through [trunk-based development](https://www.atlassian.com/continuous-delivery/continuous-integration/trunk-based-development) and follow best practices like branching by abstraction and feature toggles.
 
 # Benefits
 
