@@ -2,7 +2,7 @@
 	"name": "trunk-based-review",
 	"displayName": "Trunk Based Review",
 	"description": "Trunk Based Review VS Code Extension",
-	"version": "0.0.2",
+	"version": "0.1.0",
 	"publisher": "kanekotic",
 	"private": true,
 	"license": "MIT",
