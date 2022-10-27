@@ -1,8 +1,24 @@
 'use strict';
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.activate = void 0;
+exports.activate = exports.Credentials = void 0;
 const util_1 = require("util");
 const vscode = require("vscode");
+const Octokit = require("@octokit/rest");
+const GITHUB_AUTH_PROVIDER_ID = 'github';
+const SCOPES = ['user:email', 'repo', 'workflow'];
+class Credentials {
+    async getOctokit() {
+        if (this.octokit) {
+            return this.octokit;
+        }
+        const session = await vscode.authentication.getSession(GITHUB_AUTH_PROVIDER_ID, SCOPES, { createIfNone: true });
+        this.octokit = new Octokit.Octokit({
+            auth: session.accessToken
+        });
+        return this.octokit;
+    }
+}
+exports.Credentials = Credentials;
 let commentId = 1;
 class NoteComment {
     constructor(body, mode, author, parent, contextValue) {
@@ -16,6 +32,17 @@ class NoteComment {
     }
 }
 function activate(context) {
+    const github = new Credentials();
+    let user = {
+        name: 'vs-code',
+    };
+    github.getOctokit().then(oktokit => oktokit.rest.users.getAuthenticated()).then((octoUser) => {
+        console.log(octoUser);
+        user = {
+            name: octoUser.data.login,
+            iconPath: vscode.Uri.parse(octoUser.data.avatar_url),
+        };
+    });
     let reviewConfigs = {};
     const commentController = vscode.comments.createCommentController('trunk-based-review', 'Trunk based development review comments');
     context.subscriptions.push(commentController);
@@ -24,7 +51,7 @@ function activate(context) {
         Promise.resolve(vscode.workspace.openTextDocument(vscode.Uri.file(reviewFile.path))).then((document) => {
             reviewConfigs[folder.uri.path] = JSON.parse(document.getText());
             reviewConfigs[folder.uri.path].threads.forEach((element) => {
-                commentController.createCommentThread(vscode.Uri.joinPath(folder.uri, element.file), new vscode.Range(element.range.startLine, element.range.startCharacter, element.range.endLine, element.range.endCharacter), element.comments.map((comment) => new NoteComment(comment.text, vscode.CommentMode.Preview, { name: comment.owner })));
+                commentController.createCommentThread(vscode.Uri.joinPath(folder.uri, element.file), new vscode.Range(element.range.startLine, element.range.startCharacter, element.range.endLine, element.range.endCharacter), element.comments.map((comment) => new NoteComment(comment.text, vscode.CommentMode.Preview, comment.owner)));
             });
         }).catch(() => console.log(`${folder.name} workspace does not use trunk based review`));
     });
@@ -43,7 +70,7 @@ function activate(context) {
     context.subscriptions.push(vscode.commands.registerCommand('trunkbasedreview.startDraft', (reply) => {
         const thread = reply.thread;
         thread.contextValue = 'draft';
-        const newComment = new NoteComment(reply.text, vscode.CommentMode.Preview, { name: 'vscode' }, thread);
+        const newComment = new NoteComment(reply.text, vscode.CommentMode.Preview, user, thread);
         newComment.label = 'pending';
         thread.comments = [...thread.comments, newComment];
     }));
@@ -55,7 +82,7 @@ function activate(context) {
         thread.contextValue = undefined;
         thread.collapsibleState = vscode.CommentThreadCollapsibleState.Collapsed;
         if (reply.text) {
-            const newComment = new NoteComment(reply.text, vscode.CommentMode.Preview, { name: 'vscode' }, thread);
+            const newComment = new NoteComment(reply.text, vscode.CommentMode.Preview, user, thread);
             thread.comments = [...thread.comments, newComment].map(comment => {
                 comment.label = undefined;
                 return comment;
@@ -117,7 +144,7 @@ function activate(context) {
     }));
     function replyNote(reply) {
         const thread = reply.thread;
-        const newComment = new NoteComment(reply.text, vscode.CommentMode.Preview, { name: 'vscode' }, thread, thread.comments.length ? 'canDelete' : undefined);
+        const newComment = new NoteComment(reply.text, vscode.CommentMode.Preview, user, thread, thread.comments.length ? 'canDelete' : undefined);
         if (thread.contextValue === 'draft') {
             newComment.label = 'pending';
         }
@@ -151,7 +178,10 @@ function activate(context) {
                 return threadJson;
             addedToExistingThread = true;
             threadJson.comments = thread.comments.map((comment) => ({
-                owner: comment.author.name,
+                owner: {
+                    name: comment.author.name,
+                    iconPath: comment.author.iconPath?.toString(),
+                },
                 text: comment.body
             }));
             return threadJson;
@@ -166,7 +196,7 @@ function activate(context) {
                         endCharacter: thread.range.end.character,
                     },
                     comments: thread.comments.map((comment) => ({
-                        owner: comment.author.name,
+                        owner: user,
                         text: comment.body
                     }))
                 }];

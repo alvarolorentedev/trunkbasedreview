@@ -1,0 +1,19 @@
+{
+    "threads": [
+        {
+            "file": "/README.md",
+            "range": {
+                "startLine":0,
+                "startCharacter":0,
+                "endLine":0,
+                "endCharacter":0
+            },
+            "comments": [
+                {
+                   "owner": "kanekotic",
+                   "text": "awesome comment" 
+                }
+            ]
+        }
+    ]
+}
